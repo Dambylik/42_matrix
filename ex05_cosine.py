@@ -1,6 +1,5 @@
 from ex04_norm import Vector
 
-
 def angle_cos(u: Vector, v: Vector) -> float:
     """cos(θ)= (u * v) / ||u||_2 x ||v||_2"""
     if u.size != v.size:

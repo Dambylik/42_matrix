@@ -3,7 +3,7 @@ class Vector:
         self.data = [float(x) for x in data] #all your input values are converted to floats
         self.size = len(self.data)
 
-    def add(self, v):
+    def add(self, v) :
         if not isinstance(v, Vector):
             raise ValueError("Cannot add a scalar to a vector")
         if len(self.data) != len(v.data):
@@ -58,7 +58,6 @@ class Matrix:
             for k in range(len(self.data[i])):
                 self.data[i][k] *= a
         return self
-
 
     def __str__(self):
         return f"Matrix({self.data})"
