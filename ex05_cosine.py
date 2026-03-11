@@ -1,7 +1,9 @@
-from ex04_norm import Vector
+from linear_algebra import Vector
 
 def angle_cos(u: Vector, v: Vector) -> float:
-    """cos(θ)= (u * v) / ||u||_2 x ||v||_2"""
+    """Compute the cosine of the angle between two vectors using the dot product.
+    Formula: cos(θ) = (u · v) / (||u||_2 * ||v||_2)
+    """
     if u.size != v.size:
         raise ValueError("Vectors should have the same size")
     normed_u = u.norm()

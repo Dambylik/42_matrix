@@ -1,16 +1,14 @@
-from ex00_add_subtract_scale import Vector, Matrix
+from linear_algebra import Vector, Matrix
 import math
 
 def lerp(u: float, v: float, t: float) -> Vector:
-    """ f(u,v,t) = u + t(v-u)
-        f(u,v,t) = (1-t)u + tv
+    """Linear interpolation between two values (scalars, Vectors, or Matrices) at position t ∈ [0, 1].
+    Formula: lerp(u, v, t) = u + t * (v - u) = (1 - t) * u + t * v
     """
-    # Case 1: Scalars (floats/ints)
     if isinstance(u, (int, float)) and isinstance(v, (int, float)):
         #return math.fma(t, (v - u), u)
         return (u + t*(v - u))
 
-    # Case 2: Vectors
     if isinstance(u, Vector) and isinstance(v, Vector):
         if u.size != v.size:
             raise ValueError("Vectors should have the same size")
@@ -22,7 +20,6 @@ def lerp(u: float, v: float, t: float) -> Vector:
             result_vector.append(val)
         return Vector(result_vector)
 
-    # Case 3: Matrices
     if isinstance(u, Matrix) and isinstance(v, Matrix):
         if u.shape != v.shape:
             raise ValueError("Matrix should have the same dimensions")
@@ -38,6 +35,7 @@ def lerp(u: float, v: float, t: float) -> Vector:
         return Matrix(result_matrix)
     
     raise TypeError("Unsupported types for lerp")
+
 
 def main ():
     print(lerp(0.0, 1.0, 0.0))

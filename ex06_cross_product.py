@@ -1,6 +1,9 @@
-from ex04_norm import Vector
+from linear_algebra import Vector
 
 def cross_product(u: Vector, v: Vector) -> Vector:
+    """Compute the cross product of two 3D vectors, returning a vector orthogonal to both.
+    Formula: w = u x v = (u_y*v_z - u_z*v_y,  u_z*v_x - u_x*v_z,  u_x*v_y - u_y*v_x)
+    """
     if u.size != 3 or v.size != 3:
         raise ValueError("Vector should have 3 dimensions")
     

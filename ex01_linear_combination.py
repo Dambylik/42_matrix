@@ -1,7 +1,10 @@
-from ex00_add_subtract_scale import Vector
+from linear_algebra import Vector
 import math
 
 def linear_combination(u: list[Vector], coefs: list[float]) -> Vector:
+    """Compute a linear combination: scale each vector by its coefficient and sum them.
+    Formula: result = Σ coefs_i * u_i
+    """
     if len(u) != len(coefs):
         raise ValueError("Size of vector and scalar should be identical")
         
