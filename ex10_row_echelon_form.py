@@ -78,25 +78,61 @@ class Matrix:
         self.shape = (len(self.data), len(self.data[0]))
         return self
 
+    def row_echelon(self):
+        rows, cols = self.shape
+        pivot_row = 0
+        swaps = 0
 
-    
+        for j in range(cols):
+            if pivot_row >= rows:
+                break
+
+            max_row = pivot_row
+            for i in range(pivot_row + 1, rows):
+                if abs(self.data[i][j]) > abs(self.data[max_row][j]):
+                    max_row = i
+
+            if abs(self.data[max_row][j]) < 1e-9:
+                continue
+
+            if max_row != pivot_row:
+                self.data[pivot_row], self.data[max_row] = self.data[max_row], self.data[pivot_row]
+                swaps += 1 # Add this back!
+
+            for i in range(pivot_row + 1, rows):
+                factor = self.data[i][j] / self.data[pivot_row][j]
+                for k in range(j, cols):
+                    self.data[i][k] -= factor * self.data[pivot_row][k]
+            
+            pivot_row += 1
+            
+        return self, swaps # Return both for Exercise 11
+
+
 def main():
-    u = Matrix([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
-    print(f"Original: {u} has a shape {u.shape}" )
-    print(f"Transposed: {u.transpose()} has a shape {u.shape}")
-    print("shape: ", u.shape)
+    u = Matrix([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+    result, swaps = u.row_echelon()
+    print(result)
+    print(f"Swaps: {swaps}")
     print("-" * 50) 
 
-    u = Matrix([[2.0, -5.0, 0.0], [4.0, 3.0, 7.0], [-2.0, 3.0, 4.0]])
-    print(f"Original: {u} has a shape {u.shape}" )
-    print(f"Transposed: {u.transpose()} has a shape {u.shape}")
-    print("-" * 50)  
-
-    u = Matrix([[-2.0, -8.0, 4.0]])
-    print(f"Original: {u} has a shape {u.shape}" )
-    print(f"Transposed: {u.transpose()} has a shape {u.shape}")
+    u = Matrix([[1.0, 2.0], [3.0, 4.0]])
+    result, swaps = u.row_echelon()
+    print(result)
+    print(f"Swaps: {swaps}")
     print("-" * 50) 
 
+    u = Matrix([[1.0, 2.0], [2.0, 4.0]])
+    result, swaps = u.row_echelon()
+    print(result)
+    print(f"Swaps: {swaps}")
+    print("-" * 50) 
+
+    u = Matrix([[8.0, 5.0, -2.0, 4.0, 28.0], [4.0, 2.5, 20.0, 4.0, -4.0], [8.0, 5.0, 1.0, 4.0, 17.0]])
+    result, swaps = u.row_echelon()
+    print(result)
+    print(f"Swaps: {swaps}")
+    print("-" * 50) 
 
 if __name__ == '__main__':
     main()
