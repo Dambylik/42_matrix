@@ -1,120 +1,73 @@
-import math
-
-class Vector:
-    def __init__(self, data): # 'data' should be a list of floats (K)
-        """Store a list of floats as a vector and track its size."""
-        self.data = [float(x) for x in data] #all your input values are converted to floats
-        self.size = len(self.data)
-
-    def add(self, v):
-        """Add another vector component-wise and store the result in-place.
-        Formula: w_i = u_i + v_i  for each i
-        """
-        if not isinstance(v, Vector):
-            raise ValueError("Cannot add a scalar to a vector")
-        if len(self.data) != len(v.data):
-           raise ValueError("ValueError: Dimensions must match")
-        for i in range(len(self.data)):
-            self.data[i] += v.data[i]
-        return self
-
-    def sub(self, v):
-        """Subtract another vector component-wise and store the result in-place.
-        Formula: w_i = u_i - v_i  for each i
-        """
-        if not isinstance(v, Vector):
-            raise ValueError("Cannot substract a scalar from a vector")
-        if len(self.data) != len(v.data):
-            raise ValueError("ValueError: Dimensions must match")
-        for i in range(len(self.data)):
-            self.data[i] -= v.data[i]
-        return self
-
-    def scl(self, a):
-        """Scale the vector by scalar a in-place.
-        Formula: w_i = a * u_i  for each i
-        """
-        for i in range(len(self.data)):
-            self.data[i] *= a
-        return self
-
-    def dot(self, v):
-        """Compute the dot (inner) product of two vectors.
-        Formula: u · v = Σ u_i * v_i
-        """
-        if self.size != v.size:
-            raise ValueError("Vectors should have the same size")
-        result = 0.0
-        for i in range(self.size):
-            result += self.data[i] * v.data[i]
-            #result = math.fma(self.data[i], v.data[i], result)
-        return result
-
-    def __str__(self):
-        return f"Vector({self.data})"
-
-    def norm_1(self):
-        """Manhattan (L1) norm: sum of absolute values of components.
-        Formula: ||u||_1 = Σ |u_i|
-        """
-        if self.size == 0:
-            return 0.0
-        return sum(abs(x) for x in self.data)
-
-    def norm(self):
-        """Euclidean (L2) norm: square root of the dot product with itself.
-        Formula: ||u||_2 = sqrt(Σ u_i²) = sqrt(u · u)
-        """
-        if self.size == 0:
-            return 0.0
-        return pow(self.dot(self), 0.5)
-
-    def norm_inf(self):
-        """Supremum (L∞) norm: largest absolute value among all components.
-        Formula: ||u||_∞ = max(|u_i|)
-        """
-        if self.size == 0:
-            return 0.0
-        return max(abs(x) for x in self.data)
-
+from vector_class import Vector
 
 class Matrix:
-    def __init__(self, data): # 'data' is a list of lists [[row1], [row2]]
-        """Store a 2D list of floats as a matrix and compute its shape (rows, cols)."""
-        self.data = [[float(val) for val in row] for row in data]
-        # Shape is (rows, columns)
-        self.shape = (len(self.data), len(self.data[0])) if self.data else 0
 
-    def add(self, m):
-        """Add another matrix element-wise in-place (matrices must have the same shape).
-        Formula: C_ij = A_ij + B_ij
+    def __init__(self, data):
         """
-        if self.shape != m.shape:
-            raise ValueError("ValueError: Dimensions must match")
-        for i in range(len(self.data)):
-            for k in range(len(self.data[i])):
-                self.data[i][k] += m.data[i][k]
-        return self
+        data : list of lists [[row1], [row2]]
+        shape : (rows, cols)
+        """
+        self.data = []
+        if isinstance(data, list):
+            #Path 1: m1 = Matrix([[1.0, 2.0], [3.0, 4.0]]) - list of lists
+            # loop validates numbers, ensures the grid is rectangular, and stores it.
+            #all return true only if all elements True
+            #elem = single row in matrix
+            if all(isinstance(elem, list) and len(data[0]) == len(elem) and all(type(i) in [int, float, complex] for i in elem) for elem in data):
+                self.data = data
+                self.shape = (len(data), len(data[0])) 
+		# a shape: Matrix((3, 3)) (the matrix will be filled with zeros by default)
+        # Path 2: m2 = Matrix((3, 3)) - tuple representing dimensions.
+        elif isinstance(data, tuple) and len(data) == 2 and all(isinstance(elem, int) and elem >= 0 for elem in data):
+            for i in range(data[0]):
+                row = []
+                for j in range(data[1]):
+                    row.append(0)
+                self.data.append(row)
+                self.shape = (data[0], data[1])
+        else:
+            raise ValueError("Invalid form of data,", data)
 
-    def sub(self, m):
-        """Subtract another matrix element-wise in-place (matrices must have the same shape).
-        Formula: C_ij = A_ij - B_ij
-        """
-        if self.shape != m.shape:
-            raise ValueError("ValueError: Dimensions must match")
-        for i in range(len(self.data)):
-            for k in range(len(self.data[i])):
-                self.data[i][k] -= m.data[i][k]
-        return self
 
-    def scl(self, a):
-        """Scale every element of the matrix by scalar a in-place.
-        Formula: B_ij = a * A_ij
-        """
-        for i in range(len(self.data)):
-            for k in range(len(self.data[i])):
-                self.data[i][k] *= a
-        return self
+    def __add__(self, other):
+        if not isinstance(other, Matrix):
+            raise TypeError("Invalid type of input value")
+            #raise TypeError(f"Invalid input: {func.__name__} requires a Matrix object.")
+        if self.shape != other.shape:
+            raise ValueError(f"ValueError: Dimensions must match")
+        result = [[self.data[i][j] + other.data[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
+        return Matrix(result)
+
+
+    def __sub__(self, other):
+        if not isinstance(other, Matrix):
+            raise TypeError("Invalid type of input value")
+            #raise TypeError(f"Invalid input: {func.__name__} requires a Matrix object.")
+        if self.shape != other.shape:
+            raise ValueError(f"ValueError: Dimensions must match")
+        result = [[self.data[i][j] - other.data[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
+        return Matrix(result)
+
+
+    def __mul__(self, other):
+        if any(isinstance(other, scalar_type) for scalar_type in [int, float, complex]):
+            result = [[self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
+            return Matrix(result)
+        
+        elif isinstance(other, Vector):
+            if self.shape[1] != other.shape[0]:
+                raise ValueError("ValueError: Dimensions must match")
+            result = [[sum([self.data[i][k] * other.data[k][j] for k in range(self.shape[1])]) for j in range(other.shape[1])] for i in range(self.shape[0])]
+            return Vector(result)
+        
+        elif isinstance(other, Matrix):
+            if self.shape[1] != other.shape[0]:
+                raise ValueError("ValueError: Dimensions must match")
+            result = [[sum([self.data[i][k] * other.data[k][j] for k in range(self.shape[1])]) for j in range(other.shape[1])] for i in range(self.shape[0])]
+            return Matrix(result)
+        else:
+            raise TypeError("Invalid type of input value")
+          
 
     def __str__(self):
         return f"Matrix({self.data})"

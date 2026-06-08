@@ -1,4 +1,4 @@
-from linear_algebra import Vector
+from matrix_class import Vector
 
 def angle_cos(u: Vector, v: Vector) -> float:
     """Compute the cosine of the angle between two vectors using the dot product.

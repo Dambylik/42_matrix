@@ -1,4 +1,4 @@
-from linear_algebra import Vector, Matrix
+from matrix_class import Vector, Matrix
 import math
 
 def lerp(u: float, v: float, t: float) -> Vector:

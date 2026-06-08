@@ -1,4 +1,4 @@
-from linear_algebra import Vector
+from matrix_class import Vector
 
 def cross_product(u: Vector, v: Vector) -> Vector:
     """Compute the cross product of two 3D vectors, returning a vector orthogonal to both.

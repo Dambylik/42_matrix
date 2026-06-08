@@ -1,4 +1,4 @@
-from linear_algebra import Vector
+from matrix_class import Vector
 
 def main():
     u = Vector([0.0, 0.0])
