@@ -1,50 +1,24 @@
-from matrix_class import Vector, Matrix
-import math
+"""
+Linear interpolation between two values at position t ∈ [0, 1].
+Formula: lerp(u, v, t) = u + t * (v - u) = (1 - t) * u + t * v
 
-def lerp(u: float, v: float, t: float) -> Vector:
-    """Linear interpolation between two values (scalars, Vectors, or Matrices) at position t ∈ [0, 1].
-    Formula: lerp(u, v, t) = u + t * (v - u) = (1 - t) * u + t * v
-    """
-    if isinstance(u, (int, float)) and isinstance(v, (int, float)):
-        #return math.fma(t, (v - u), u)
-        return (u + t*(v - u))
+Time complexity : O(n) - time scales linearly with the data size (n)
+Space complexity : O(n) - builds a new copy of the data (size n).
+"""
 
-    if isinstance(u, Vector) and isinstance(v, Vector):
-        if u.size != v.size:
-            raise ValueError("Vectors should have the same size")
-                      
-        result_vector = []
-        for i in range(u.size):
-            #val = math.fma(t, (v.data[i] - u.data[i]), u.data[i])
-            val = u.data[i] + t*(v.data[i] - u.data[i])
-            result_vector.append(val)
-        return Vector(result_vector)
-
-    if isinstance(u, Matrix) and isinstance(v, Matrix):
-        if u.shape != v.shape:
-            raise ValueError("Matrix should have the same dimensions")
-
-        result_matrix = []
-        for i in range(len(u.data)):
-            row = []
-            for j in range(len(u.data[i])):
-                #val = math.fma(t, (v.data[i][j] - u.data[i][j]), u.data[i][j])
-                val = (u.data[i][j] + t*(v.data[i][j] - u.data[i][j]))
-                row.append(val)
-            result_matrix.append(row)
-        return Matrix(result_matrix)
-    
-    raise TypeError("Unsupported types for lerp")
+from vector_class import Vector
+from matrix_class import Matrix
 
 
 def main ():
-    print(lerp(0.0, 1.0, 0.0))
-    print(lerp(0.0, 1.0, 1.0))
-    print(lerp(0.0, 1.0, 0.5))
-    print(lerp(21.0, 42.0, 0.3))
-    print(lerp(Vector([2.0, 1.0]), Vector([4.0, 2.0]), 0.3))
-    print(lerp(Matrix([[2.0, 1.0], [3.0, 4.0]]), Matrix([[20.0, 10.0], [30.0, 40.0]]), 0.5))
+    print(Vector.lerp(0., 1., 0.)); # 0.0
+    print(Vector.lerp(0., 1., 1.)); # 1.0
+    print(Vector.lerp(0., 1., 0.5)); # 0.5
+    print(Vector.lerp(21., 42., 0.3)); # 27.3
+    print(Vector.lerp(Vector([[2., 1.]]), Vector([[4., 2.]]), 0.3)); #[2.6], [1.3]
+    print(Vector.lerp(Matrix([[2., 1.], [3., 4.]]), Matrix([[20., 10.], [30., 40.]]), 0.5)); # [[11., 5.5][16.5, 22.]]
     return
+
 
 if __name__ == '__main__':
     main()

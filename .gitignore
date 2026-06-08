@@ -1,2 +1,7 @@
 .DS_Store
 .DS_Store
+__pycache__
+*.pyc
+
+__pycache__/matrix_class.cpython-314.pyc
+__pycache__/vector_class.cpython-314.pyc
