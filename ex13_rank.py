@@ -1,16 +1,25 @@
+"""
+Compute the rank: number of linearly independent rows (non-zero rows after reduction).
+Algorithm:
+    1. Reduce to row echelon form via row_echelon().
+    2. Count rows that contain at least one non-zero element (|x| > 1e-9).
+Formula: rank(A) = number of non-zero rows in row echelon form
+
+Time complexity : O(n^3)
+"""
 from matrix_class import Vector, Matrix
 
 def main():
-    u = Matrix([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    print(u.rank())
+    u = Matrix([[1., 0., 0.],[0., 1., 0.],[0., 0., 1.]])
+    print(u.rank()) # 3
     print("-" * 50) 
 
-    u = Matrix([[1.0, 2.0, -1.0], [2.0, 4.0, 2.0], [0.0, 0.0, 1.0], [0.0, 0.0, 1.0]])
-    print(u.rank())
-    print("-" * 50)  
+    u = Matrix([[ 1., 2., 0., 0.],[ 2., 4., 0., 0.],[-1., 2., 1., 1.]])
+    print(u.rank()) # 2
+    print("-" * 50) 
 
-    u = Matrix([[8.0, 4.0, 7.0, 21.0], [5.0, 7.0, 6.0, 18.0], [-2.0, 20.0, 1.0, 7.0]])
-    print(u.rank())
+    u = Matrix([[ 8., 5., -2.],[ 4., 7., 20.],[ 7., 6., 1.],[21., 18., 7.]])
+    print(u.rank()) # 3
     print("-" * 50) 
 
 

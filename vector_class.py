@@ -1,5 +1,5 @@
 import math
-
+import numpy as np
 
 class Vector:
 
@@ -109,41 +109,89 @@ class Vector:
 
 
 
-    def dot(self, v):
-        """Compute the dot (inner) product of two vectors.
-        Formula: u · v = Σ u_i * v_i
-        """
-        if self.size != v.size:
+    def dot(self, other):
+        if not isinstance(other, Vector):
+            raise TypeError("Invalid input: uncompatiable type")
+        if self.size != other.size:
             raise ValueError("Vectors should have the same size")
+        
+        # 1. Flatten both 2D data grids into simple 1D sequences
+        flat_self = []
+        for row in self.data:
+            for num in row:
+                flat_self.append(num)
+                
+        flat_other = []
+        for row in other.data:
+            for num in row:
+                flat_other.append(num)
+        
         result = 0.0
+
+        # 2. Loop through the flat sequences using a single index
         for i in range(self.size):
-            result += self.data[i] * v.data[i]
-            #result = math.fma(self.data[i], v.data[i], result)
+            result = math.fma(flat_self[i], flat_other[i], result)  
         return result
+
+
+    def norm_1(self):
+        abs_sum = 0.0
+        lst_data = np.reshape(self.data, (1, -1))[0]
+        for elem in lst_data:
+            if elem >= 0:
+                abs_sum += elem
+            else:
+                abs_sum -= elem
+        return abs_sum
+
+
+    def norm(self):
+        squared_sum = 0.0
+        lst_data = np.reshape(self.data, (1, -1))[0]
+        for elem in lst_data:
+            squared_sum += elem ** 2
+        return squared_sum ** 0.5
+
+
+    def norm_inf(self):
+        max_abs_value = float('-inf')
+        lst_data = np.reshape(self.data, (1, -1))[0]
+        for elem in lst_data:
+            if elem >= 0:
+                abs_value = elem
+            else:
+                abs_value = -elem
+            if abs_value > max_abs_value:
+                max_abs_value = abs_value
+        return max_abs_value
+
+
+    def angle_cos(u: Vector, v: Vector) -> float:
+        if not all(isinstance(vec, Vector) for vec in [u, v]):
+            raise TypeError("Vectors should have the same size")
+        if u.size != v.size:
+            raise TypeError("Vectors should have the same size")
+        
+        cosine_similarity = u.dot(v) / (u.norm() * v.norm())
+        return np.around(cosine_similarity, decimals=10)
+
+
+    @staticmethod
+    def cross_product(u: Vector, v: Vector) -> Vector:
+        if not (u.size == 3 and u.size == v.size):
+            raise ValueError("Vector should have 3 dimensions")
+        
+        # Flattening the 2D data and unpacking it into three variables in one step
+        x1, y1, z1 = [num for row in u.data for num in row]
+        x2, y2, z2 = [num for row in v.data for num in row]
+
+        cross_x = (y1 * z2 - y2 * z1)
+        cross_y = (z1 * x2 - z2 * x1)
+        cross_z = (x1 * y2 - x2 * y1)
+        
+        return Vector([[cross_x, cross_y, cross_z]])
 
     def __str__(self):
         return f"Vector({self.data})"
 
-    def norm_1(self):
-        """Manhattan (L1) norm: sum of absolute values of components.
-        Formula: ||u||_1 = Σ |u_i|
-        """
-        if self.size == 0:
-            return 0.0
-        return sum(abs(x) for x in self.data)
-
-    def norm(self):
-        """Euclidean (L2) norm: square root of the dot product with itself.
-        Formula: ||u||_2 = sqrt(Σ u_i²) = sqrt(u · u)
-        """
-        if self.size == 0:
-            return 0.0
-        return pow(self.dot(self), 0.5)
-
-    def norm_inf(self):
-        """Supremum (L∞) norm: largest absolute value among all components.
-        Formula: ||u||_∞ = max(|u_i|)
-        """
-        if self.size == 0:
-            return 0.0
-        return max(abs(x) for x in self.data)
+    
