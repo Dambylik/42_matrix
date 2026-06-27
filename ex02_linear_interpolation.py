@@ -1,6 +1,6 @@
 """
 Linear interpolation between two values at position t ∈ [0, 1].
-Formula: lerp(u, v, t) = u + t * (v - u) = (1 - t) * u + t * v
+Formula: lerp(u, v, t) = u + (v - u) * t 
 When you write lerp(21.0, 42.0, 0.3), you are asking the computer: "If I start at 21, and my destination is 42, exactly where am I when I have completed 30% of the journey?"
 
 Time complexity : O(n) - time scales linearly with the data size (n)

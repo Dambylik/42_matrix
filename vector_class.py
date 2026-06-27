@@ -1,7 +1,7 @@
 import math
-import numpy as np
 
-class Vector:
+
+class Vector():
 
     def __init__(self, data): # 'data' should be a list of floats (K)
         '''
@@ -68,9 +68,9 @@ class Vector:
 
     @staticmethod
     #Normally, methods inside a class require self as their first parameter because they act upon a specific object's data (e.g., u.add(v) modifies u). You use it when a function logically relates to your class, but it processes external inputs rather than modifying a single, existing instance.
-    def linear_combination(lst_vectors, coefs):
-        if not all(isinstance(lst, list) for lst in [lst_vectors, coefs]):
-            raise ValueError("Invalid form of list")
+    def linear_combination(lst_vectors, scalar):
+        if not all(isinstance(lst, list) for lst in [lst_vectors, scalar]):
+            raise ValueError("Size of vector and scalar should be identical")
         
         if not all(isinstance(v, Vector) for v in lst_vectors):
             raise TypeError("Invalid input: list should contain only Vectors.", lst_vectors)
@@ -78,91 +78,77 @@ class Vector:
         if not all(v.size == lst_vectors[0].size for v in lst_vectors):
             raise TypeError("Invalid input: list of Vectors should contain Vectors of the same shape.", lst_vectors)
         
-        if len(coefs) != len(lst_vectors) or not all(type(i) in [int, float] for i in coefs):
+        if len(scalar) != len(lst_vectors) or not all(type(i) in [int, float] for i in scalar):
             raise TypeError("Size of vector and scalar should be identical")
 
-        v_shape = lst_vectors[0].shape
-        v = Vector([[0.0] * v_shape[1] for _ in range(v_shape[0])]) #build a 2D grid: for Row Vector (1, 3) and for Column Vector (3, 1)
-        for vector, coef in zip(lst_vectors, coefs):
-            for i in range(v.shape[0]):
-                for j in range(v.shape[1]):
-                    v.data[i][j] = math.fma(vector.data[i][j], coef, v.data[i][j])
-        return (v)
+        result_size = lst_vectors[0].size
+        result = Vector([[0.0] * result_size])
+        for vector, coef in zip(lst_vectors, scalar):
+            result += vector * coef
+        return (result)
 
 
     @staticmethod
     def lerp(u, v, t):
+        from matrix_class import Matrix
+
         if type(u) != type(v):
             raise TypeError("Invalid input: uncompatiable type")
         
         if not (isinstance(t, float) and (0 <= t <= 1)):
             raise ValueError("Invalid value: a real number from 0 to 1 required.", t)
         
-        if isinstance(u, (int, float, complex)):
-                return math.fma(v - u, t, u) # Apply fma directly to flat numbers
+        if any(isinstance(u, accepted_type) for accepted_type in [int, float, complex, Vector, Matrix]):
+            return u + (v - u) * t 
         else:
-            result = type(u)([[0.0] * u.shape[1] for _ in range(u.shape[0])])
-            for i in range(u.shape[0]):
-                for j in range(u.shape[1]):
-                    result.data[i][j] = math.fma(v.data[i][j] - u.data[i][j], t, u.data[i][j])
-            return result
-
+            raise TypeError("Invalid input: unsupported type")
 
 
     def dot(self, other):
         if not isinstance(other, Vector):
-            raise TypeError("Invalid input: uncompatiable type")
+            raise TypeError("Invalid input: incompatible type")
         if self.size != other.size:
             raise ValueError("Vectors should have the same size")
         
-        # 1. Flatten both 2D data grids into simple 1D sequences
-        flat_self = []
-        for row in self.data:
-            for num in row:
-                flat_self.append(num)
-                
-        flat_other = []
-        for row in other.data:
-            for num in row:
-                flat_other.append(num)
+        # Flatten both vectors into 1D lists
+        flat_self = [elem for row in self.data for elem in row]
+        flat_other = [elem for row in other.data for elem in row]
         
         result = 0.0
-
-        # 2. Loop through the flat sequences using a single index
         for i in range(self.size):
-            result = math.fma(flat_self[i], flat_other[i], result)  
+            result += flat_self[i] * flat_other[i]           
         return result
 
 
     def norm_1(self):
         abs_sum = 0.0
-        lst_data = np.reshape(self.data, (1, -1))[0]
-        for elem in lst_data:
-            if elem >= 0:
-                abs_sum += elem
-            else:
-                abs_sum -= elem
+        for row in self.data:
+            for elem in row:
+                if elem >= 0:
+                    abs_sum += elem
+                else:
+                    abs_sum -= elem
         return abs_sum
 
 
     def norm(self):
         squared_sum = 0.0
-        lst_data = np.reshape(self.data, (1, -1))[0]
-        for elem in lst_data:
-            squared_sum += elem ** 2
+        for row in self.data:
+            for elem in row:
+                squared_sum += elem ** 2            
         return squared_sum ** 0.5
 
 
     def norm_inf(self):
-        max_abs_value = float('-inf')
-        lst_data = np.reshape(self.data, (1, -1))[0]
-        for elem in lst_data:
-            if elem >= 0:
-                abs_value = elem
-            else:
-                abs_value = -elem
-            if abs_value > max_abs_value:
-                max_abs_value = abs_value
+        max_abs_value = 0.0       
+        for row in self.data:
+            for elem in row:
+                if elem >= 0:
+                    abs_value = elem
+                else:
+                    abs_value = -elem                
+                if abs_value > max_abs_value:
+                    max_abs_value = abs_value                   
         return max_abs_value
 
 
@@ -173,7 +159,7 @@ class Vector:
             raise TypeError("Vectors should have the same size")
         
         cosine_similarity = u.dot(v) / (u.norm() * v.norm())
-        return np.around(cosine_similarity, decimals=10)
+        return round(cosine_similarity, 10)
 
 
     @staticmethod
@@ -181,14 +167,13 @@ class Vector:
         if not (u.size == 3 and u.size == v.size):
             raise ValueError("Vector should have 3 dimensions")
         
-        # Flattening the 2D data and unpacking it into three variables in one step
+        # Flatten both vectors into 1D lists
         x1, y1, z1 = [num for row in u.data for num in row]
         x2, y2, z2 = [num for row in v.data for num in row]
 
         cross_x = (y1 * z2 - y2 * z1)
         cross_y = (z1 * x2 - z2 * x1)
-        cross_z = (x1 * y2 - x2 * y1)
-        
+        cross_z = (x1 * y2 - x2 * y1)        
         return Vector([[cross_x, cross_y, cross_z]])
 
     def __str__(self):

@@ -1,7 +1,7 @@
 """
 Computes the trace of the given matrix.
 Sum of the diagonal elements of a square matrix.
-Formula: tr(A) = Σ_i A_ii
+Formula: tr(A) = sum of main diagonal
 
 Time complexity : O(n)
 """

@@ -13,19 +13,20 @@ from vector_class import Vector
 def main():
     u = Vector([[2., 3.]])
     v = Vector([[5., 7.]])
-    a = 2.
-    print("\nAddition:", u + v)
-    print ("Substraction:", u - v)
-    print ("Scaled:", u * a)
+    
+    print("\nAddition:", u + v) # [7.0][10.0]
+    print ("Substraction:", u - v) # [-3.0][-4.0]
+    print ("Scaled:", u * 2) # [4.0][6.0]
 
     print ("-" * 50)
 
-    m_1 = Matrix([[1., 2.], [3., 4.]])
-    m_2 = Matrix([[7., 4.], [-2., 2.]])
-    b = 2.
-    print ("\nAddition:", m_1 + m_2)
-    print ("Substraction:", m_1 - m_2)
-    print ("Scaled:", m_1 * b)
+    u = Matrix([[1., 2.], [3., 4.]])
+    v = Matrix([[7., 4.], [-2., 2.]])
+    
+    print ("\nAddition:", u + v) # [8.0, 6.0][1.0, 6.0]
+    print ("Substraction:", u - v) # [-6.0, -2.0][5.0, 2.0]
+    print ("Scaled:", u * 2) # [2.0, 4.0][6.0, 8.0]
+    
     return
 
 

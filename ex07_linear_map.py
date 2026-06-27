@@ -2,21 +2,22 @@
 Multiply a matrix by a vector or a matrix by a matrix.
 
 Multiply the matrix by a column vector (linear map).
-Formula: (Av)_i = Σ_j A_ij * v_j   (dot product of each row with vec)
+Formula: vec = dot product of (matrix_row x vector)
 
 Multiply two matrices together (standard matrix product).
-Formula: C_ij = Σ_k A_ik * B_kj   (A must be m x n , B must be n x p -> C is m x p)
+Formula: U = sum of (row x column) 
 
-Time complexity : O(nm)
-Space complexity : O(nm)
-The complexity of these functions is O(nmp), where n, m, and p are the dimensions of the input matrices and vectors.
-The mul_vec function has a complexity of O(n*m) because it loops for each row of the self matrix (n loops) and for each column of the other vector (m loops) to perform the corresponding dot product.
-The mul_mat function has a complexity of O(nmp) because it loops for each row of the self matrix (n loops) and for each column of the other matrix (p loops) and for each column of the self matrix and 
-for each row of the other matrix (m loops) to perform the corresponding dot product.
-The space complexity of the mul_mat function is O(n*p), where n is the number of rows of the self matrix and p is the number of columns of the other matrix.
+Time complexity: 
+- mul_vec: O(mn) to compute the dot product of m rows with an n-length vector.
+- mul_mat: O(mnp) to compute all nested dot products between the two matrices.
+
+Space complexity: 
+- mul_vec: O(m) to store the resulting column vector.
+- mul_mat: O(mp) to store the newly created m x p matrix.
 """
 
-from matrix_class import Vector, Matrix
+from matrix_class import Matrix
+from vector_class import Vector
 
 
 def main():

@@ -1,13 +1,13 @@
 """
 Compute different kinds of norms.
 - L1-norm (Manhattan norm): sum of absolute values of components.
-Formula: ||u||_1 = Σ |u_i|
+Formula: ||l1|| = sum(|u_i|)
 
 - L2-norm (Euclidean norm): square root of the dot product with itself.
-Formula: ||u||_2 = sqrt(Σ u_i²) = sqrt(u · u)
+Formula: ||l2|| = sqrt(sum(u_i)²)
 
 - L∞-norm (Supremum norm): - largest absolute value among all components.
-Formula: ||u||_∞ = max(|u_i|)
+Formula: ||L∞|| = max(|u_i|)
 
 Time complexity : O(n) - time scales linearly with the data size (n)
 Space complexity : O(n) - builds a new copy of the data (size n).
