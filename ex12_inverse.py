@@ -2,13 +2,12 @@
 Compute the inverse via Gauss-Jordan elimination on the augmented matrix [A | I].
 Algorithm:
     1. Build augmented matrix [A | I].
-    2. Forward elimination with partial pivoting to reach [U | L⁻¹].
-    3. Back substitution to reach [I | A⁻¹].
-    4. Extract the right half as A⁻¹.
+    2. Apply row-echelon form of the new matrix
+    3. Extract the right half as A⁻¹.
 Formula: A * A⁻¹ = I
 
-Time complexity : O(n^3)
-Space complexity : O(n^3)
+Time complexity : O(n^3) - requires nested looping through rows and columns.
+Space complexity : O(^2) - beause we store a full copy of the matrix.
 """
 
 from matrix_class import Matrix

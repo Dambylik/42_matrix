@@ -1,15 +1,17 @@
 """
 Compute the row-echelon form of the given matrix.
-Reduce the matrix to row echelon form via Gaussian elimination with partial pivoting.
-Algorithm:
-    For each column j, find the row with the largest absolute value (pivot),
-    swap it to the current pivot row, then eliminate all entries below the pivot:
-    factor = A_ij / A_pivot_j
-    row_i -= factor * pivot_row
-    Returns (reduced_matrix, swap_count) — swap_count is used by determinant().
+Uses Gaussian elimination to transform the matrix. Every pivot 
+(leading number in a row) becomes exactly 1. Every other number in that 
+pivot's column becomes exactly 0.
 
-Time complexity : O(n^3)
-Space complexity : O(n^3)
+Algorithm:
+1. Find the first non-zero number (pivot) in the current column.
+2. Swap rows if necessary to bring that non-zero number to the current row.
+3. Divide the entire row by the pivot to scale the pivot to 1.
+4. Subtract scaled versions of this row from ALL other rows to force the rest of the column to 0.
+
+Time complexity : O(n^3) - requires nested looping through rows and columns.
+Space complexity : O(1) - modifies the original list in-place.
 """
 
 from matrix_class import Matrix

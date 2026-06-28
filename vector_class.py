@@ -3,7 +3,7 @@ import math
 
 class Vector():
 
-    def __init__(self, data): # 'data' should be a list of floats (K)
+    def __init__(self, data):
         '''
         Forcing to define the 2D geometry of the vector.
         They must type Vector([[1.0, 2.0, 3.0]]) (Row)
@@ -11,13 +11,13 @@ class Vector():
         '''
         self.data = []
         # when data is a list
-        if isinstance(data, list): # if row vector([[0.0, 1.0, 2.0, 3.0]]) is a list of a list of floats
-            if len(data) == 1 and isinstance(data[0], list) and len(data[0]) > 0 and all(type(i) in [int, float, complex] for i in data[0]):	
+        if isinstance(data, list): # if vector is a list of a list of floats ([[0.0, 1.0, 2.0, 3.0]]) 
+            if len(data) == 1 and isinstance(data[0], list) and len(data[0]) > 0 and all(type(i) in [int, float] for i in data[0]):	
                 self.data = data
                 self.shape = (1, len(data[0])) #(1, N) = one row and N columns
                 self.size = len(data[0])
-                # if Vector([[0.0], [1.0], [2.0], [3.0]]) is a list of lists of single float
-            elif all(isinstance(elem, list) and len(elem) == 1 and all(type(i) in [int, float, complex] for i in elem) for elem in data):
+                # if vector is a list of lists of single float ([[0.0], [1.0], [2.0], [3.0]]) 
+            elif all(isinstance(elem, list) and len(elem) == 1 and all(type(i) in [int, float] for i in elem) for elem in data):
                 self.data = data
                 self.shape = (len(data), 1) #(N, 1) = N rows and one column
                 self.size = len(data)
@@ -46,7 +46,7 @@ class Vector():
 
 
     def __mul__(self, other):
-        if any(isinstance(other, scalar_type) for scalar_type in [int, float, complex]):
+        if any(isinstance(other, scalar_type) for scalar_type in [int, float]):
             result = [[self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
             return Vector(result)
         
@@ -67,7 +67,6 @@ class Vector():
 
 
     @staticmethod
-    #Normally, methods inside a class require self as their first parameter because they act upon a specific object's data (e.g., u.add(v) modifies u). You use it when a function logically relates to your class, but it processes external inputs rather than modifying a single, existing instance.
     def linear_combination(lst_vectors, scalar):
         if not all(isinstance(lst, list) for lst in [lst_vectors, scalar]):
             raise ValueError("Size of vector and scalar should be identical")
@@ -98,7 +97,7 @@ class Vector():
         if not (isinstance(t, float) and (0 <= t <= 1)):
             raise ValueError("Invalid value: a real number from 0 to 1 required.", t)
         
-        if any(isinstance(u, accepted_type) for accepted_type in [int, float, complex, Vector, Matrix]):
+        if any(isinstance(u, accepted_type) for accepted_type in [int, float, Vector, Matrix]):
             return u + (v - u) * t 
         else:
             raise TypeError("Invalid input: unsupported type")
@@ -175,6 +174,7 @@ class Vector():
         cross_y = (z1 * x2 - z2 * x1)
         cross_z = (x1 * y2 - x2 * y1)        
         return Vector([[cross_x, cross_y, cross_z]])
+
 
     def __str__(self):
         return f"Vector({self.data})"

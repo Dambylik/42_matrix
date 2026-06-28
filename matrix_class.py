@@ -8,15 +8,11 @@ class Matrix:
         """
         self.data = []
         if isinstance(data, list):
-            #Path 1: u = Matrix([[1.0, 2.0], [3.0, 4.0]]) - list of lists
-            # loop validates numbers, ensures the grid is rectangular, and stores it.
-            #all return true only if all elements True
-            #elem = single row in matrix
-            if all(isinstance(elem, list) and len(data[0]) == len(elem) and all(type(i) in [int, float, complex] for i in elem) for elem in data):
+            #if shape is list of lists: Matrix([[1.0, 2.0], [3.0, 4.0]])
+            if all(isinstance(elem, list) and len(data[0]) == len(elem) and all(type(i) in [int, float] for i in elem) for elem in data):
                 self.data = data
                 self.shape = (len(data), len(data[0])) 
-		# a shape: Matrix((3, 3)) (the matrix will be filled with zeros by default)
-        # Path 2: m2 = Matrix((3, 3)) - tuple representing dimensions.
+		# if shape is tuple: Matrix((3, 3)) (the matrix will be filled with zeros by default)
         elif isinstance(data, tuple) and len(data) == 2 and all(isinstance(elem, int) and elem >= 0 for elem in data):
             for i in range(data[0]):
                 row = []
@@ -51,7 +47,7 @@ class Matrix:
     def __mul__(self, other):
         from vector_class import Vector
 
-        if any(isinstance(other, scalar_type) for scalar_type in [int, float, complex]):
+        if any(isinstance(other, scalar_type) for scalar_type in [int, float]):
             result = [[self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
             return Matrix(result)
         
@@ -76,7 +72,6 @@ class Matrix:
 
     def mul_vec(self, other):
         from vector_class import Vector
-        
         if not isinstance(other, Vector):
             raise TypeError("Invalid type of input value.")
             
@@ -97,7 +92,6 @@ class Matrix:
 
 
     def mul_mat(self, other):
-        
         if not isinstance(other, Matrix):
             raise TypeError("Invalid type of input value.")
             
@@ -137,40 +131,40 @@ class Matrix:
             for row in range(self.shape[0]):
                 new_row.append(self.data[row][column])
             transposed_data.append(new_row)
-        self.data = transposed_data
-        self.shape = (len(self.data), len(self.data[0]))
-        return self
+        return Matrix(transposed_data)
 
 
     def row_echelon(self):
-		# gaussian elimination with back-substitution for reduced row echelon from
         pivot = 0
         for row in range(self.shape[0]):
             if pivot >= self.shape[1]:
-                break
-			# find a non-zero pivot element in the current pivot
-            while self.data[row][pivot] == 0:
-                pivot += 1
-                if pivot >= self.shape[1]:
-                    return self
-			# swap the current row with a row containing a non-zero pivot element
-            for i in range(row + 1, self.shape[0]):
-                if self.data[i][pivot] != 0:
-                    self.data[row], self.data[i] = self.data[i], self.data[row]
-                    break
-			# scale the current row to make the pivot element 1
+                return self
+            
+            # find the first non-zero number (pivot) in the current column.
+            search_row = row
+            while self.data[search_row][pivot] == 0:
+                search_row += 1
+                if search_row == self.shape[0]:
+                    search_row = row
+                    pivot += 1
+                    if pivot == self.shape[1]:
+                        return self
+                        
+            # swap rows if necessary to bring that non-zero number to the current row.
+            self.data[row], self.data[search_row] = self.data[search_row], self.data[row]
+            
+            # scale (divide) the entire row by the pivot to scale the pivot to 1.
             divisor = self.data[row][pivot]
             self.data[row] = [elem / divisor for elem in self.data[row]]
 
-			# perform the row operations to eliminate other non-zero elements in the current column
+            # subtract scaled versions of this row from ALL other rows to force the rest of the column to 0.
             for i in range(self.shape[0]):
                 if i != row:
                     multiplier = self.data[i][pivot]
-                    self.data[i] = [elem - multiplier * self.data[row][j] for j, elem in enumerate(self.data[i])]
+                    self.data[i] = [elem - multiplier * self.data[row][j] for j, elem in enumerate(self.data[i])]      
             pivot += 1
         return self
-
-
+    
 
     def determinant(self):
         if self.shape[0] != self.shape[1]:
@@ -183,22 +177,21 @@ class Matrix:
         matrix_copy = [row.copy() for row in self.data]
         det = 1.0
 		
-		# gaussian elimination
+		# find the first non-zero number (pivot) in the current column.
         for i in range(self.shape[0]):
-			# find the pivot
             for j in range(i, self.shape[0]):
                 if matrix_copy[j][i] != 0:
-					# swap rows if necessary
+					# swap rows if necessary to bring that non-zero number to the current row.
                     if i != j:
                         matrix_copy[i], matrix_copy[j] = matrix_copy[j], matrix_copy[i]
                         det *= -1
 					
-					# scale the current row to make the pivot element 1
+					# scale (divide) the entire row by the pivot to scale the pivot to 1.
                     pivot = matrix_copy[i][i]
                     det *= pivot
                     matrix_copy[i] = [elem / pivot for elem in matrix_copy[i]]
 					
-					# eliminate other non-zero elements in the same column
+					# subtract other non-zero elements in the same column
                     for k in range(i + 1, self.shape[0]):
                         factor = matrix_copy[k][i]
                         matrix_copy[k] = [x - y * factor for x, y in zip(matrix_copy[k], matrix_copy[i])]
@@ -211,21 +204,33 @@ class Matrix:
             raise TypeError("Inverse is undefined for non-square matrices.")
         if self.determinant() == 0:
             raise ValueError(f"Matrix is not invertable.")
+        
         # create an augmented matrix [A|I]
-        augmented_matrix = [row + [float(i == j) for j in range(self.shape[0])] for i, row in enumerate(self.data)]
+        n = self.shape[0]
+        augmented_matrix = []
+
+        for i, row in enumerate(self.data):
+            identity_row = []
+            for j in range(n):
+                if i == j:
+                    identity_row.append(1.0)
+                else:
+                    identity_row.append(0.0)
+            new_row = row + identity_row
+            augmented_matrix.append(new_row)
         augmented_matrix = Matrix(augmented_matrix)
 
-        # apply Gauss-Jordan elimination to obtain the reduced row-echelon form
-        rref_matrix = augmented_matrix.row_echelon()
+        # apply Gauss-Jordan elimination to obtain the row-echelon form
+        ref_matrix = augmented_matrix.row_echelon()
 
-        # extract the inverse matrix [I|B]
-        inverse_matrix = [row[self.shape[0]:] for row in rref_matrix.data]
+        # extract the inverse matrix A⁻¹
+        inverse_matrix = [row[self.shape[0]:] for row in ref_matrix.data]
         return inverse_matrix
     
 
     def rank(self):
         matrix_copy = Matrix(self.data)
-        # apply Gauss-Jordan elimination to obtain the reduced row-echelon form
+        #apply Gauss-Jordan elimination to obtain the row-echelon form
         matrix_copy.row_echelon()
         rank = 0
         # count the number of non-zero rows
