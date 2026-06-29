@@ -1,7 +1,6 @@
 """
 Compute the cross product of two 3D vectors, returning a vector orthogonal to both.
 Formula: w = (u_y * v_z - u_z * v_y,  u_z * v_x - u_x * v_z,  u_x * v_y - u_y * v_x)
-
 """
 
 from vector_class import Vector

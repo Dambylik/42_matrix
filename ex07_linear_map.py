@@ -1,5 +1,5 @@
 """
-Multiply a matrix by a vector or a matrix by a matrix.
+Multiply a matrix by a vector or by a matrix.
 
 Multiply the matrix by a column vector (linear map).
 Formula: vec = dot product of (matrix_row x vector)

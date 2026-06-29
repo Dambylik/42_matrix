@@ -3,7 +3,7 @@ Computes the trace of the given matrix.
 Sum of the diagonal elements of a square matrix.
 Formula: tr(A) = sum of main diagonal
 
-Time complexity : O(n)
+Time complexity : O(n) - time scales linearly with the data size (n)
 """
 
 from matrix_class import Matrix

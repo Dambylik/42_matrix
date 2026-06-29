@@ -7,7 +7,9 @@ Formula: rank(A) = number of non-zero rows in row echelon form
 
 Time complexity : O(n^3) - requires nested looping through rows and columns.
 """
+
 from matrix_class import Matrix
+
 
 def main():
     u = Matrix([[1., 0., 0.],[0., 1., 0.],[0., 0., 1.]])

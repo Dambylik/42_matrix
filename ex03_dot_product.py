@@ -1,7 +1,7 @@
 """
 Compute dot product of two vectors of the same
 dimension.
-Formula: u x v = sum( u_i * v_i )
+Formula: result = sum( u_i * v_i )
 
 Time complexity : O(n) - time scales linearly with the data size (n)
 Space complexity : O(n) - builds a new copy of the data (size n).

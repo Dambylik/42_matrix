@@ -1,22 +1,19 @@
-import math
-
-
 class Vector():
 
     def __init__(self, data):
         '''
         Forcing to define the 2D geometry of the vector.
-        They must type Vector([[1.0, 2.0, 3.0]]) (Row)
-        They must type Vector([[1.0], [2.0], [3.0]]) (Column)
+        They must type Vector([[0.0, 1.0, 2.0]]) (Row)
+        They must type Vector([[0.0], [1.0], [2.0]]) (Column)
         '''
         self.data = []
-        # when data is a list
-        if isinstance(data, list): # if vector is a list of a list of floats ([[0.0, 1.0, 2.0, 3.0]]) 
+        # if vector is a list of a list of floats ([[0.0, 1.0, 2.0]]) 
+        if isinstance(data, list):
             if len(data) == 1 and isinstance(data[0], list) and len(data[0]) > 0 and all(type(i) in [int, float] for i in data[0]):	
                 self.data = data
                 self.shape = (1, len(data[0])) #(1, N) = one row and N columns
                 self.size = len(data[0])
-                # if vector is a list of lists of single float ([[0.0], [1.0], [2.0], [3.0]]) 
+            # if vector is a list of lists of single float ([[0.0], [1.0], [2.0]]) 
             elif all(isinstance(elem, list) and len(elem) == 1 and all(type(i) in [int, float] for i in elem) for elem in data):
                 self.data = data
                 self.shape = (len(data), 1) #(N, 1) = N rows and one column
@@ -32,6 +29,7 @@ class Vector():
             raise TypeError("Cannot add a scalar to a vector")
         if self.shape != other.shape:
             raise ValueError("ValueError: Dimensions must match")
+        
         result = [[self.data[i][j] + other.data[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
         return Vector(result)
 
@@ -41,6 +39,7 @@ class Vector():
             raise TypeError("Cannot substract a scalar from a vector")
         if self.shape != other.shape:
             raise ValueError("ValueError: Dimensions must match")
+        
         result = [[self.data[i][j] - other.data[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
         return Vector(result)
 
@@ -53,6 +52,7 @@ class Vector():
         elif isinstance(other, Vector):
             if self.shape[1] != other.shape[0]:
                 raise ValueError("ValueError: Dimensions must match")
+            
             result = [[self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
             return Vector(result)
         
@@ -61,8 +61,10 @@ class Vector():
             if isinstance(other, Matrix):
                 if self.shape[1] != other.shape[0]:
                     raise ValueError("ValueError: Dimensions must match")
+                
                 result = [[sum([self.data[i][k] * other.data[k][j] for k in range(self.shape[1])]) for j in range(other.shape[1])] for i in range(self.shape[0])]
                 return Matrix(result)
+            
             raise TypeError("Invalid type of input value")
 
 
@@ -70,10 +72,8 @@ class Vector():
     def linear_combination(lst_vectors, scalar):
         if not all(isinstance(lst, list) for lst in [lst_vectors, scalar]):
             raise ValueError("Size of vector and scalar should be identical")
-        
         if not all(isinstance(v, Vector) for v in lst_vectors):
             raise TypeError("Invalid input: list should contain only Vectors.", lst_vectors)
-        
         if not all(v.size == lst_vectors[0].size for v in lst_vectors):
             raise TypeError("Invalid input: list of Vectors should contain Vectors of the same shape.", lst_vectors)
         
@@ -90,10 +90,8 @@ class Vector():
     @staticmethod
     def lerp(u, v, t):
         from matrix_class import Matrix
-
         if type(u) != type(v):
             raise TypeError("Invalid input: uncompatiable type")
-        
         if not (isinstance(t, float) and (0 <= t <= 1)):
             raise ValueError("Invalid value: a real number from 0 to 1 required.", t)
         
@@ -151,7 +149,8 @@ class Vector():
         return max_abs_value
 
 
-    def angle_cos(u: Vector, v: Vector) -> float:
+    @staticmethod
+    def angle_cos(u, v):
         if not all(isinstance(vec, Vector) for vec in [u, v]):
             raise TypeError("Vectors should have the same size")
         if u.size != v.size:
@@ -162,7 +161,7 @@ class Vector():
 
 
     @staticmethod
-    def cross_product(u: Vector, v: Vector) -> Vector:
+    def cross_product(u, v):
         if not (u.size == 3 and u.size == v.size):
             raise ValueError("Vector should have 3 dimensions")
         

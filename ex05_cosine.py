@@ -1,9 +1,9 @@
 """
 Compute the cosine of the angle between two vectors using the dot product.
-Formula: cos(θ) = (u * v) / (||l2||_u * ||l2||_v)
+Formula: cos(θ) = (u * v) / (||l2_u|| * ||l2_v||)
 
-The complexity of this function depends on the dot and norm methods which are both O(n), where n is the size of the vectors.
-Therefore, the total complexity of angle_cos is also O(n).
+Time complexity : O(n) - time scales linearly with the data size (n)
+Space complexity : O(n) - builds a new copy of the data (size n).
 """
 
 from vector_class import Vector

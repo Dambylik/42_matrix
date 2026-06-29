@@ -46,7 +46,6 @@ class Matrix:
 
     def __mul__(self, other):
         from vector_class import Vector
-
         if any(isinstance(other, scalar_type) for scalar_type in [int, float]):
             result = [[self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
             return Matrix(result)
@@ -118,6 +117,7 @@ class Matrix:
     def trace(self):
         if self.shape[0] != self.shape[1]:
             raise TypeError("Matrix should be square")
+        
         trace = 0.0
         for i in range(self.shape[0]):
             trace += self.data[i][i]
@@ -220,9 +220,8 @@ class Matrix:
             augmented_matrix.append(new_row)
         augmented_matrix = Matrix(augmented_matrix)
 
-        # apply Gauss-Jordan elimination to obtain the row-echelon form
         ref_matrix = augmented_matrix.row_echelon()
-
+        
         # extract the inverse matrix A⁻¹
         inverse_matrix = [row[self.shape[0]:] for row in ref_matrix.data]
         return inverse_matrix
@@ -230,8 +229,8 @@ class Matrix:
 
     def rank(self):
         matrix_copy = Matrix(self.data)
-        #apply Gauss-Jordan elimination to obtain the row-echelon form
         matrix_copy.row_echelon()
+        
         rank = 0
         # count the number of non-zero rows
         for row in matrix_copy.data:
